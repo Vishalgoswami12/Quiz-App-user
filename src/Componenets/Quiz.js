@@ -48,12 +48,13 @@ const submitQuestion = (e) => {
     let data = Object.fromEntries(formData.entries());
 
     let obj = {
+        id:Date.now(),
 
         question:data.question,
 
         option:  [1,2,3,4].reduce((acc,el) => {
             if(data[`option${el}`]){
-                 acc.push({ title:data[`option${el}`], id:el, isCorrect: data.select == el})
+                 acc.push({ title:data[`option${el}`], id:el, isCorrect: data.select == el.toString()})
             }
             return acc;
         },[])
@@ -95,7 +96,7 @@ const handleDelete = (index) => {
             {
                 active.map((_ ,i)=> {
                     return (
-                        <div className={`option ${i > 1 ? 'flex' : ""} `}>
+                        <div key={i} className={`option ${i > 1 ? 'flex' : ""} `}>
                         <input required  name={"option"+(i+1)}  placeholder={"Option" + (i+1)}/>
                         {i >  1 ? <button onClick={() => handleDelete(i)}>X</button> : ""}
                         </div>
@@ -115,7 +116,7 @@ const handleDelete = (index) => {
             {
                 active.map((_ ,i) => {
                     return(
-                        <option className="correct" value={i}>{i+1}</option> 
+                        <option key={i} className="correct" value={i}>{i+1}</option> 
                     )
                 })
             }

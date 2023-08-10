@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import App from "../App";
 
-// import {Link} from "react-router-dom"
 
 
 const QuizDisplay = () => {
@@ -10,20 +9,22 @@ const QuizDisplay = () => {
 
     const navigate = useNavigate();
     const[score,setScore] = useState(0);
-    const [isClicked,setIsClicked] = useState(false);
-    const [selectedQuestion,setSelectedQuestion] = useState("");
+    const [selectedOptions,setSelectedOptios] = useState(Array(data.length).fill(null));
     const[attempQuestion,setAttemQuestion] = useState(0)
 
 
-const handleAnswer = (ans,i,ele) => {
+const handleAnswer = (ans,questionIndex,optionIndex) => {
      setAttemQuestion(state => state + 1)
 
     if(ans.isCorrect){
       let newScore = score + 1;
         setScore(newScore);
     }
-    setIsClicked(i);
-    setSelectedQuestion(ele.question);
+    setSelectedOptios((prevSelectedOptions) => {
+        const newSelectedOptions = [...prevSelectedOptions];
+        newSelectedOptions[questionIndex] = optionIndex;
+        return newSelectedOptions;
+    });
 }
 
 const clearData = () => {
@@ -38,25 +39,24 @@ const clearData = () => {
         <App/>
         <div className="quiz"> 
         { data.length ?
-            data.map((ele) => {
+            data.map((ele,questionIndex) => {
                 return(
-                    <>
+                    <div key={questionIndex}>
                     <h2 className="ques-box">{ele?.question}</h2>
                     <div className="dir">
                         {
-                            ele?.option?.map((el,i) => {
+                            ele?.option?.map((el,optionIndex) => {
                                 if(el?.title){
                                     return(
-                                         <button className={isClicked === i  && selectedQuestion === ele.
-                                         question  ? "correcdt" : ""} onClick={() => handleAnswer(el,i,ele)}>
-                                             <p>{ele?.option[i].title}</p></button>
+                                         <button key={optionIndex} className={selectedOptions[questionIndex] ===optionIndex  ? "correcdt" : ""} onClick={() => handleAnswer(el,questionIndex,optionIndex)}>
+                                             <p>{ele?.option[optionIndex].title}</p></button>
                                      )
                                 }
                             })
                         }
                     </div>
                    
-                    </>
+                    </div>
                 )
             }): <h2 style={{textAlign:"center"}}>Please Addd Questions</h2>
         }
